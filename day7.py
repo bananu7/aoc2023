@@ -49,6 +49,8 @@ def five(hand):
     ):
         # return FIVE + card_value(hand[0])
         return FIVE
+    else:
+        return 0
 
 
 def four(hand):
@@ -56,6 +58,8 @@ def four(hand):
         return FOUR  # + card_value(hand[0])
     elif num_of_equal(hand, 1) == 4:
         return FOUR  # + card_value(hand[1])
+    else:
+        return 0
 
 
 def full_house(hand):
@@ -66,6 +70,8 @@ def full_house(hand):
     # XXYYY where X is stronger
     elif hand[2] == hand[3] == hand[4] and hand[0] == hand[1]:
         return FULL
+    else:
+        return 0
 
 
 def triple(hand):
@@ -75,6 +81,8 @@ def triple(hand):
         return TRIPLE  # + card_value(hand[1])
     elif num_of_equal(hand, 2) == 3:
         return TRIPLE  # + card_value(hand[2])
+    else:
+        return 0
 
 
 def twopair(hand):
@@ -82,6 +90,8 @@ def twopair(hand):
     ispair = groups == [1, 2, 2, 2, 2]
     if ispair:
         return TWOPAIR
+    else:
+        return 0
 
 
 def pair(hand):
@@ -89,6 +99,8 @@ def pair(hand):
     ispair = groups == [1, 1, 1, 2, 2]
     if ispair:
         return PAIR
+    else:
+        return 0
 
 
 def highest_card(hand):
@@ -109,17 +121,55 @@ def score_hand(hand):
     elif pair(hand):
         return pair(hand)
     else:
-        return highest_card(hand)
+        return 1  # highest_card(hand)
+
+
+def ordered_hand_compare(a, b):
+    for i in range(0, 5):
+        if card_value(a[i]) > card_value(b[i]):
+            return -1
+        elif card_value(a[i]) < card_value(b[i]):
+            return 1
+    return 0
+
+
+def hand_compare(a, b):
+    s = score_hand(a)
+    s2 = score_hand(b)
+    if s > s2:
+        return -1
+    elif s < s2:
+        return 1
+    else:
+        return ordered_hand_compare(a, b)
+
+
+from functools import cmp_to_key
+
+
+def bids_compare(a, b):
+    (hand_a, bid_a) = a
+    (hand_b, bid_b) = b
+    return hand_compare(hand_a, hand_b)
 
 
 def main():
-    file = open("input7_test.txt", "r")
+    file = open("input7.txt", "r")
     lines = file.readlines()
 
+    hands = []
     for line in lines:
         [hand, bid] = line.strip().split(" ")
 
-        print(hand, bid, score_hand(hand))
+        hands.append((hand, int(bid)))
+
+    hands.sort(key=cmp_to_key(bids_compare), reverse=True)
+
+    sum = 0
+    for rank, (hand, bid) in enumerate(hands):
+        print(hand, bid)
+        sum += bid * (rank + 1)
+    print(sum)
 
 
 main()
