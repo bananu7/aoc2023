@@ -89,7 +89,7 @@ def follow_path(maze, s, off):
 
 
 
-with open("input10.txt") as file:
+with open("input10_test2.txt") as file:
     maze = [line.strip() for line in file]
 
     s = find_s(maze)
@@ -102,8 +102,29 @@ with open("input10.txt") as file:
     p_e = follow_path(maze, s, EAST)
     p_w = follow_path(maze, s, WEST)
 
-    print(len(p_n) // 2)
-    print(len(p_s) // 2)
-    print(len(p_e) // 2)
+    #print(len(p_n) // 2)
+    #print(len(p_s) // 2)
+    #print(len(p_e) // 2)
     print(len(p_w) // 2)
 
+    counter = 0
+
+    debug = []
+
+    for y in range(0, len(maze)):
+        inside = False
+        debug.append("")
+        for x in range(0, len(maze[0])):
+            if (x,y) in p_w:
+                inside = not inside
+                debug.append(".")
+            elif maze[y][x] == "." and inside:
+                counter += 1
+                debug.append("#")
+            else:
+                debug.append(".")
+    print(counter)
+
+    print(debug)
+
+#177 - too low
