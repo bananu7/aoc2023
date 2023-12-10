@@ -1,6 +1,4 @@
 
-# start 10:52
-
 def find_s(maze):
     for y in range(0, len(maze)):
         for x in range(0, len(maze[y])):
@@ -9,42 +7,86 @@ def find_s(maze):
     raise Exception("no starting point")
 
 
-def gen_nexts(maze, x, y):
-    sx = len(maze[0])
-    sy = len(maze)
+NORTH = ( 0, -1)
+SOUTH = ( 0, 1)
+EAST = (1,  0)
+WEST = (-1,  0)
 
-    nexts = []
-    if x > 0:
-        if maze[y][x-1] in ["F", "-", "L", "S"]:
-            nexts.append((x-1, y))
-    if x < sx-1:
-        if maze[y][x+1] in ["J", "-", "7", "S"]:
-            nexts.append((x+1, y))
-    if y > 0:
-        if maze[y-1][x] in ["F", "|", "7", "S"]:
-            nexts.append((x, y-1))
-    if y < sy-1:
-        if maze[y+1][x] in ["L", "|", "J", "S"]:
-            nexts.append((x, y+1))
-    return nexts
+def follow_path(maze, s, off):
+    (sx, sy) = s
+    p = (s[0] + off[0], s[1] + off[1])
+    path = [s,p]
 
+    while True:
+        if p == s:
+            return path
 
-def dfs(maze, p, prev, s):
-    nexts = gen_nexts(maze, p[0], p[1])
-    nexts = list(filter(lambda n: n != prev, nexts))
+        (x,y) = p
 
-    # blind path
-    if len(nexts) == 0:
-        return None
+        if off == WEST:
+            left = maze[y][x-1]
+            p = (x-1, y)
+            if left == "L":
+                off = NORTH
+                path.append(p)
+            elif left == "F":
+                off = SOUTH
+                path.append(p)
+            elif left == "-":
+                path.append(p)
+            elif left == "S":
+                return path
+            else:
+                return None
 
-    # reached start, we have a loop
-    if any(map(lambda n: n == s, nexts)):
-        return [p]
+        elif off == EAST:
+            right = maze[y][x+1]
+            p = (x+1, y)
+            if right == "J":
+                off = NORTH
+                path.append(p)
+            elif right == "7":
+                off = SOUTH
+                path.append(p)
+            elif right == "-":
+                path.append(p)
+            elif right == "S":
+                return path
+            else:
+                return None
 
-    results = map(lambda n: dfs(maze, n, p, s), nexts)
-    for r in results:
-        if r:
-            return [p] + r
+        elif off == SOUTH:
+            down = maze[y+1][x]
+            p = (x, y+1)
+            if down == "J":
+                off = WEST
+                path.append(p)
+            elif down == "L":
+                off = EAST
+                path.append(p)
+            elif down == "|":
+                path.append(p)
+            elif down == "S":
+                return path
+            else:
+                return None
+
+        elif off == NORTH:
+            up = maze[y-1][x]
+            p = (x, y-1)
+            if up == "7":
+                off = WEST
+                path.append(p)
+            elif up == "F":
+                off = EAST
+                path.append(p)
+            elif up == "|":
+                path.append(p)
+            elif up == "S":
+                return path
+            else:
+                return None
+
 
 
 with open("input10.txt") as file:
@@ -52,8 +94,16 @@ with open("input10.txt") as file:
 
     s = find_s(maze)
 
-    print(s)
-    print(len(maze), len(maze[0]))
-    #r = dfs(maze, s, s, s)
-    #print(r)
-    #print(len(r) // 2)
+    print("s", s)
+    print("size", len(maze), len(maze[0]))
+
+    p_n = follow_path(maze, s, NORTH)
+    p_s = follow_path(maze, s, SOUTH)
+    p_e = follow_path(maze, s, EAST)
+    p_w = follow_path(maze, s, WEST)
+
+    print(len(p_n) // 2)
+    print(len(p_s) // 2)
+    print(len(p_e) // 2)
+    print(len(p_w) // 2)
+
