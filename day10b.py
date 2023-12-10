@@ -97,6 +97,7 @@ with open("input10.txt") as file:
     print("s", s)
     print("size", len(maze), len(maze[0]))
 
+    # doesn't properly find S tile orientation, i did it manually
     p_n = follow_path(maze, s, NORTH)
     p_s = follow_path(maze, s, SOUTH)
     p_e = follow_path(maze, s, EAST)
@@ -128,7 +129,7 @@ with open("input10.txt") as file:
             if (x,y) in winning_path:
                 if m in ["L", "F", "S"]:
                     sstart = m
-                elif m == "|" or m == "S" or (m == "J" and sstart in ["F"]) or (m == "7" and sstart in ["L", "S"]):
+                elif m == "|" or m == "S" or (m == "J" and sstart in ["F"]) or (m == "7" and sstart in ["L", "S"]): # this is wrong, depends on S-tile orientation
                     if inside:
                         counter += line_counter
                         line_counter = 0
