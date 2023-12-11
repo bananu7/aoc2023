@@ -51,9 +51,6 @@ with open("input11_test.txt") as file:
 
     galaxies_x_expanded = []
 
-    print(xs_to_expand)
-
-
     for galaxy in sorted(galaxies_y_expanded, key=lambda g: g[0]):
         if galaxy[0] < x:
             galaxies_x_expanded.append(galaxy)
@@ -81,3 +78,18 @@ with open("input11_test.txt") as file:
                 line += "."
         print(line)
 
+    ## paths
+    # sorted just to compare with example
+    gs = sorted(galaxies_x_expanded, key=lambda g: g[1])
+    #print(gs)
+
+    def compute_dist(a,b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+    sum = 0
+    for i in range(0, len(gs)-1):
+        for j in range(i+1, len(gs)):
+            dist = compute_dist(gs[i], gs[j])
+            #print('dist between', i+1, 'and', j+1, ' = ', dist)
+            sum += dist
+    print(sum)
