@@ -1,4 +1,4 @@
-with open("input11_test.txt") as file:
+with open("input11.txt") as file:
     starmap = [line.strip() for line in file]
 
     galaxies = []
@@ -18,11 +18,13 @@ with open("input11_test.txt") as file:
                 except:
                     pass
 
+    SPACE_EXP = 1000000 - 1
+
     ## Y
     ys = iter(ys_to_expand)
     y = next(ys)
     ny = next(ys)
-    count = 1
+    count = SPACE_EXP
 
     galaxies_y_expanded = []
 
@@ -34,7 +36,7 @@ with open("input11_test.txt") as file:
                 while galaxy[1] > ny:
                     try:
                         y = ny
-                        count += 1
+                        count += SPACE_EXP
                         ny = next(ys)
                     except:
                         ny = None
@@ -47,7 +49,7 @@ with open("input11_test.txt") as file:
     xs = iter(xs_to_expand)
     x = next(xs)
     nx = next(xs)
-    count = 1
+    count = SPACE_EXP
 
     galaxies_x_expanded = []
 
@@ -59,7 +61,7 @@ with open("input11_test.txt") as file:
                 while galaxy[0] > nx:
                     try:
                         x = nx
-                        count += 1
+                        count += SPACE_EXP
                         nx = next(xs)
                     except:
                         nx = None
