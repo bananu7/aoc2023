@@ -1,3 +1,5 @@
+import re
+
 def group(springs):
     groups = []
     inside = springs[0] == "#"
@@ -85,6 +87,7 @@ def find_first_hash(springs):
 
 
 def tree_count(springs, nums, tab = 0):
+    springs = re.sub(r'\.+', '.', springs)
     def debug(*args):
         print("\t" * tab, *args)
 
@@ -145,7 +148,7 @@ def tree_count(springs, nums, tab = 0):
     cuts = map(lambda off: off+num, offs)
 
     options = list(map(lambda off: springs[(num+off+1):], offs))
-    options = list(filter(lambda opt: len(opt) == 0 or opt[0] in ["?", "#"], options)) # filter starting dots
+    #options = list(filter(lambda opt: len(opt) == 0 or opt[0] in ["?", "#"], options)) # filter starting dots
 
     debug("options", options)
 
