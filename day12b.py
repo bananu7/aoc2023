@@ -89,9 +89,10 @@ def find_first_hash(springs):
 def tree_count(springs, nums, tab = 0):
     springs = re.sub(r'\.+', '.', springs)
     def debug(*args):
-        print("\t" * tab, *args)
+        #print("\t" * tab, *args)
+        pass
 
-    debug("rawentry", springs, nums)
+    #debug("rawentry", springs, nums)
     if len(nums) == 0:
         return 1
 
@@ -120,35 +121,29 @@ def tree_count(springs, nums, tab = 0):
     debug("entry", springs, x, ln, nums)
 
     first_hash = find_first_hash(springs)
+
     minoff = 0
-    maxoff = min(first_hash, len(springs) - num)
+    maxoff = min(first_hash, len(springs) - num) if first_hash else len(springs) - num
 
     offs = list(range(minoff, maxoff+1))
     valid_offs = []
 
     def valid(off):
-        if off > len(springs):
-            debug("cut < len", off, len(springs), springs)
-            return False
-
-        if off+num == len(springs):
-            return True
-
-        for i in range(0, off - num):
-            if springs[i] == "#":
-                debug(off, "left")
+        # check for dots inside the occupied range
+        for i in range(off, off + num):
+            if springs[i] == ".":
                 return False
 
-        # need to check if it can have a dot at the last element of the cut
-        return springs[off+num] in [".", "?"]
-
-    debug("offs", offs)
+        # check that it either ends in a dot or by ending the vector
+        if off+num < len(springs):
+            return springs[off+num] in [".", "?"]
+        else:
+            return True
     offs = list(filter(valid, offs))
-    debug("voffs", offs, num)
+    debug("offs", offs, "-> valid -> ", offs, num)
     cuts = map(lambda off: off+num, offs)
 
     options = list(map(lambda off: springs[(num+off+1):], offs))
-    #options = list(filter(lambda opt: len(opt) == 0 or opt[0] in ["?", "#"], options)) # filter starting dots
 
     debug("options", options)
 
@@ -188,8 +183,8 @@ def test():
     assert tree_count("????.######..#####.", [1,6,5]) == 4
     assert tree_count("?###????????", [3,2,1]) == 10
 
-test()
-#main()
+#test()
+main()
 
 
  
