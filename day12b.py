@@ -118,18 +118,20 @@ def tree_count(springs, nums, tab = 0):
         return 0
 
     springs = springs[x:] # cut off the starting dots
-    debug("entry", springs, x, ln, nums)
 
     first_hash = find_first_hash(springs)
 
     minoff = 0
-    maxoff = min(first_hash, len(springs) - num) if first_hash else len(springs) - num
+    maxoff = min(first_hash, len(springs) - num) if first_hash is not None else len(springs) - num
+
+    debug("entry", springs, x, ln, nums, "fmm", first_hash, minoff, maxoff)
 
     offs = list(range(minoff, maxoff+1))
     valid_offs = []
 
     def valid(off):
         # check for dots inside the occupied range
+        debug(springs[off:off+num])
         for i in range(off, off + num):
             if springs[i] == ".":
                 return False
@@ -158,7 +160,7 @@ def tree_count(springs, nums, tab = 0):
 ###
 
 def main():
-    file = open("input12_test.txt", "r")
+    file = open("input12.txt", "r")
     lines = file.readlines()
 
     sum = 0
@@ -182,6 +184,9 @@ def test():
     assert tree_count("????.#...#...", [4,1,1]) == 1
     assert tree_count("????.######..#####.", [1,6,5]) == 4
     assert tree_count("?###????????", [3,2,1]) == 10
+
+    # main cases
+    assert tree_count(".#??#?#?.?##?#.", [6,5]) == 1
 
 #test()
 main()
