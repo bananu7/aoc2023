@@ -76,6 +76,14 @@ def find_first_group_of_minimum(springs, num):
 
     return start, ln
 
+
+def find_first_hash(springs):
+    for i in range(0, len(springs)):
+        if springs[i] == "#":
+            return i
+    return None
+
+
 def tree_count(springs, nums, tab = 0):
     def debug(*args):
         print("\t" * tab, *args)
@@ -108,8 +116,9 @@ def tree_count(springs, nums, tab = 0):
     springs = springs[x:] # cut off the starting dots
     debug("entry", springs, x, ln, nums)
 
+    first_hash = find_first_hash(springs)
     minoff = 0
-    maxoff = len(springs) - num # at most entire group and one dot
+    maxoff = min(first_hash, len(springs) - num)
 
     offs = list(range(minoff, maxoff+1))
     valid_offs = []
