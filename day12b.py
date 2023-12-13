@@ -54,7 +54,7 @@ def brute_count(springs, nums):
 
 ### p2
 
-def find_first_group(springs):
+def find_first_group_of_minimum(springs, num):
     start = None
     ln = 0
     for i in range(0, len(springs)):
@@ -68,13 +68,20 @@ def find_first_group(springs):
             if springs[i] == "?" or springs[i] == "#":
                 ln += 1
             else:
-                return start, ln
+                if ln >= num:
+                    return start, ln
+                else:
+                    start = None
+                    ln = 0
 
     return start, ln
 
 
 def tree_count(springs, nums, tab = 0):
-    print("\t" * tab, "rawentry", springs, nums)
+    def debug(*args):
+        print("\t" * tab, *args)
+
+    debug("rawentry", springs, nums)
     if len(nums) == 0:
         return 1
 
@@ -90,46 +97,59 @@ def tree_count(springs, nums, tab = 0):
     # - else generate all fitments for that group 
     # recurse down and repeat with the cut out parts and rest of the nums
 
-    x, ln = find_first_group(springs)
+    x, ln = find_first_group_of_minimum(springs, num)
     if x == None:
-        print("no first group")
+        debug("no first group")
         return 0
 
     if ln < num:
-        print("first group",ln,"smaller than num",num)
+        debug("first group",ln,"smaller than num",num)
         return 0
 
     springs = springs[x:] # cut off the starting dots
-    print("\t" * tab, "entry", springs, x, ln, nums)
+    debug("entry", springs, x, ln, nums)
 
-    mincut = min(num + 1, len(springs)) # at least num
-    maxcut = min(ln + 1, len(springs)) # at most entire group and one dot
+    minoff = 0
+    maxoff = min(ln + 1, len(springs)) - num# at most entire group and one dot
 
-    cuts = list(range(mincut, maxcut+1))
+    offs = list(range(minoff, maxoff+1))
+    valid_offs = []
 
     def valid(cut):
+        if cut < num:
+            print("cut < num")
+            return False
+
         if cut > len(springs):
+            print("cut < len", cut, len(springs), springs)
             return False
 
         if cut == len(springs):
             return True
 
-        # need to check if it can have a dot right after
-        return springs[cut-1] in [".", "?"] and cut > num
+        for i in range(0, cut - num):
+            if springs[i] == "#":
+                debug(cut, "left")
+                return False
 
-    print("\t" * tab, "cuts", cuts)
-    cuts = list(filter(valid, cuts))
-    print("\t" * tab, "vcuts", cuts)
+        # need to check if it can have a dot at the last element of the cut
+        return springs[cut] in [".", "?"]
 
-    options = list(map(lambda cut: springs[cut:], cuts))
+    debug("cuts", offs)
+    offs = list(filter(valid, offs))
+    debug("vcuts", offs)
 
-    print("\t" * tab, "options", options)
+    options = list(map(lambda off: springs[(num+off):], offs))
+
+    debug("options", options)
 
     counts = list(map(lambda option: tree_count(option, nums[1:], tab+1), options))
 
-    print("\t" * tab, springs, "xln", nums, x, ln)
-    print("\t" * tab, "->", options, counts)
+    debug(springs, "xln", nums, x, ln)
+    debug("->", options, counts, "\n")
 
+    s = sum(counts)
+    debug(s)
     return sum(counts)
 ###
 
@@ -161,4 +181,18 @@ def main():
     print(sum)
 
 
-main()
+def test():
+    assert tree_count("???.###", [1,1,3]) == 1
+    assert tree_count(".??..??...?##.", [1,1,3]) == 4
+    assert tree_count("?#?#?#?#?#?#?#?", [1,3,1,6]) == 1
+    assert tree_count("????.#...#...", [4,1,1]) == 1
+    assert tree_count("????.######..#####.", [1,6,5]) == 4
+    assert tree_count("?###????????", [3,2,1]) == 10
+
+test()
+#main()
+
+
+ 
+
+ 
