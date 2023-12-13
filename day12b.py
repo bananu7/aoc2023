@@ -92,6 +92,8 @@ def tree_count(springs, nums, tab = 0):
         #print("\t" * tab, *args)
         pass
 
+    debug("tree_count", springs, nums)
+
     if len(nums) == 0:
         if find_first_hash(springs) == None:
             return 1
@@ -110,13 +112,9 @@ def tree_count(springs, nums, tab = 0):
     # - else generate all fitments for that group 
     # recurse down and repeat with the cut out parts and rest of the nums
 
-    x, ln = find_first_group_of_minimum(springs, num)
+    x, ln = find_first_group_of_minimum(springs, 0)
     if x == None:
         debug("no first group")
-        return 0
-
-    if ln < num:
-        debug("first group",ln,"smaller than num",num)
         return 0
 
     springs = springs[x:] # cut off the starting dots
@@ -195,7 +193,9 @@ def test():
     # main cases
     assert tree_count(".#??#?#?.?##?#.", [6,5]) == 1
 
-    assert tree_count("?.??#????##????#.#?", [1,1,4,3,1]) == 5
+    assert tree_count("?.??#????##????#.#?", [1,1,4,3,1]) == 5 #12
+    assert tree_count(".??#.???????#?.???.?", [1,7,3]) == 2 #20
+
 
 #test()
 main()
