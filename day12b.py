@@ -76,7 +76,6 @@ def find_first_group_of_minimum(springs, num):
 
     return start, ln
 
-
 def tree_count(springs, nums, tab = 0):
     def debug(*args):
         print("\t" * tab, *args)
@@ -110,36 +109,34 @@ def tree_count(springs, nums, tab = 0):
     debug("entry", springs, x, ln, nums)
 
     minoff = 0
-    maxoff = min(ln + 1, len(springs)) - num# at most entire group and one dot
+    maxoff = len(springs) - num # at most entire group and one dot
 
     offs = list(range(minoff, maxoff+1))
     valid_offs = []
 
-    def valid(cut):
-        if cut < num:
-            print("cut < num")
+    def valid(off):
+        if off > len(springs):
+            debug("cut < len", off, len(springs), springs)
             return False
 
-        if cut > len(springs):
-            print("cut < len", cut, len(springs), springs)
-            return False
-
-        if cut == len(springs):
+        if off+num == len(springs):
             return True
 
-        for i in range(0, cut - num):
+        for i in range(0, off - num):
             if springs[i] == "#":
-                debug(cut, "left")
+                debug(off, "left")
                 return False
 
         # need to check if it can have a dot at the last element of the cut
-        return springs[cut] in [".", "?"]
+        return springs[off+num] in [".", "?"]
 
-    debug("cuts", offs)
+    debug("offs", offs)
     offs = list(filter(valid, offs))
-    debug("vcuts", offs)
+    debug("voffs", offs, num)
+    cuts = map(lambda off: off+num, offs)
 
-    options = list(map(lambda off: springs[(num+off):], offs))
+    options = list(map(lambda off: springs[(num+off+1):], offs))
+    options = list(filter(lambda opt: len(opt) == 0 or opt[0] in ["?", "#"], options)) # filter starting dots
 
     debug("options", options)
 
@@ -152,16 +149,6 @@ def tree_count(springs, nums, tab = 0):
     debug(s)
     return sum(counts)
 ###
-
-'''
-1
-4
-1
-1
-4
-10
-21
-'''
 
 def main():
     file = open("input12_test.txt", "r")
