@@ -92,9 +92,11 @@ def tree_count(springs, nums, tab = 0):
         #print("\t" * tab, *args)
         pass
 
-    #debug("rawentry", springs, nums)
     if len(nums) == 0:
-        return 1
+        if find_first_hash(springs) == None:
+            return 1
+        else:
+            return 0
 
     if len(springs) == 0:
         return 0
@@ -121,6 +123,12 @@ def tree_count(springs, nums, tab = 0):
 
     first_hash = find_first_hash(springs)
 
+    if len(nums) == 0:
+        if first_hash is not None:
+            return 0
+        else:
+            return 1
+
     minoff = 0
     maxoff = min(first_hash, len(springs) - num) if first_hash is not None else len(springs) - num
 
@@ -131,7 +139,6 @@ def tree_count(springs, nums, tab = 0):
 
     def valid(off):
         # check for dots inside the occupied range
-        debug(springs[off:off+num])
         for i in range(off, off + num):
             if springs[i] == ".":
                 return False
@@ -187,6 +194,8 @@ def test():
 
     # main cases
     assert tree_count(".#??#?#?.?##?#.", [6,5]) == 1
+
+    assert tree_count("?.??#????##????#.#?", [1,1,4,3,1]) == 5
 
 #test()
 main()
